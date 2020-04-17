@@ -1,7 +1,7 @@
 
 
 import FileInput.*;
-
+import LexicalAnalyzer.LexicalAnalyzer;
 
 
 public class Main {
@@ -9,11 +9,13 @@ public class Main {
 
         System.out.println("Hello Compiler");
 
-        FileInput myFile = new FileInput("demos/inputTest.txt");
+        LexicalAnalyzer test = new LexicalAnalyzer();
 
-        while(!myFile.isFileFinished()){
-            System.out.println(myFile.getNextChar());
-        }
+       // FileInput myFile = new FileInput("demos/inputTest.txt");
+
+       // while(!myFile.isFileFinished()){
+         //   System.out.println(myFile.getNextChar());
+        //}
 
     }
 }
