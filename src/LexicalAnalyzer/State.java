@@ -19,13 +19,12 @@ enum Transition{
 class State {
 
     private StateList name;
-
     private boolean isFinalState;
 
     //Represent the transitions from this state for a character
     private Map<Character,StateList> nextStates;
 
-    //Esoecial type of transitions for groups of characters
+    //Especial type of transitions for groups of characters
     private Map<Transition,StateList> especialNextStates;
 
 

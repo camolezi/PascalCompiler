@@ -5,13 +5,18 @@ import FileInput.FileInput;
 
 public class LexicalAnalyzer {
 
+    //Special caracthers
+    private static final String NEW_LINE = System.getProperty("line.separator");
+    private static final String SPACE = " ";
+
+
     private FileInput fileToRead;
-
     public LexicalAnalyzer(FileInput fileToRead){
-
-        StateManager.setUpStateTable();
         this.fileToRead = fileToRead;
 
+        //Start subsystems
+        StateManager.setUpStateTable();
+        ReservedWords.laodWords();
     }
 
     public String nextToken(){
@@ -23,14 +28,23 @@ public class LexicalAnalyzer {
         while(!currentState.isFinalState()){
 
             char nextInput = fileToRead.getNextChar();
-            wordRead = wordRead + nextInput;
+
+            if(nextInput != ' ' && nextInput != '\n'){
+                wordRead = wordRead + nextInput;
+            }
 
             currentState = StateManager.state( currentState.next(nextInput) );
           //  System.out.println("Input:" + nextInput + " -> " + currentState.toDebugString());
         }
 
-        return wordRead + ", " + currentState;
 
+        //check if its a reserved word
+        String Reserved = ReservedWords.check(wordRead);
+        if( Reserved != null){
+            return wordRead + ", " + Reserved;
+        }
+
+        return wordRead + ", " + currentState;
     }
 
 
