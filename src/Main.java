@@ -9,13 +9,12 @@ public class Main {
 
         System.out.println("Hello Compiler");
 
-        LexicalAnalyzer test = new LexicalAnalyzer();
+        FileInput myFile = new FileInput("demos/inputTest.txt");
 
-       // FileInput myFile = new FileInput("demos/inputTest.txt");
+        LexicalAnalyzer tokenizer = new LexicalAnalyzer(myFile);
 
-       // while(!myFile.isFileFinished()){
-         //   System.out.println(myFile.getNextChar());
-        //}
+        while(!myFile.isFileFinished())
+            System.out.println(tokenizer.nextToken());
 
     }
 }

@@ -5,27 +5,31 @@ import FileInput.FileInput;
 
 public class LexicalAnalyzer {
 
-    //Table for looking in next states
+    private FileInput fileToRead;
 
-    public LexicalAnalyzer(){
+    public LexicalAnalyzer(FileInput fileToRead){
+
         StateManager.setUpStateTable();
+        this.fileToRead = fileToRead;
 
-        State currentState = StateManager.state(StateList.A);
-        System.out.println(currentState);
+    }
 
-        FileInput myFile = new FileInput("demos/inputTest.txt");
+    public String nextToken(){
+
+        State currentState = StateManager.state(StateList.Initial);
+        //System.out.println(currentState);
+        String wordRead = "";
 
         while(!currentState.isFinalState()){
-            char nextInput = myFile.getNextChar();
-            currentState = StateManager.state( currentState.next(nextInput) );
-            System.out.println("Input:" + nextInput + " -> " + currentState);
 
+            char nextInput = fileToRead.getNextChar();
+            wordRead = wordRead + nextInput;
+
+            currentState = StateManager.state( currentState.next(nextInput) );
+          //  System.out.println("Input:" + nextInput + " -> " + currentState.toDebugString());
         }
 
-
-
-        System.out.println("FinalState reached");
-
+        return wordRead + ", " + currentState;
 
     }
 

@@ -5,10 +5,9 @@ import java.util.Map;
 
 //Testing for now
 enum StateList{
-    A,
-    B,
-    C,
-    F,
+    Initial,
+    id,
+    intermediate_1,
     Error
 }
 
@@ -26,22 +25,19 @@ class StateManager {
         stateList = new EnumMap<StateList, State>(StateList.class);
 
         //Create all states and is transitions
-        addState(new State(StateList.A,false)
-                .addTransition('b',StateList.B)
-                .addTransition('c',StateList.C));
+        addState(new State(StateList.Initial,false)
+                .addTransition(Transition.letter, StateList.intermediate_1));
+
+        addState(new State(StateList.intermediate_1,false)
+                .addTransition(Transition.letter, StateList.intermediate_1)
+                .addTransition(Transition.number, StateList.intermediate_1)
+                .addTransition(' ', StateList.id));
+
+        addState(new State(StateList.id, true));
+
+        addState(new State(StateList.Error, true));
 
 
-        addState( new State(StateList.C, false)
-                .addTransition('b',StateList.B));
-
-
-        addState( new State(StateList.B, false)
-                .addTransition('f',StateList.F));
-
-
-        addState( new State(StateList.F, true));
-
-        addState(new State(StateList.Error,true));
     }
 
 
