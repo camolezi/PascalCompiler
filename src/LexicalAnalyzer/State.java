@@ -28,8 +28,6 @@ class State {
         }
     }
 
-
-
     public State addTransition(Character input, StateList newState){
         nextStates.put(input,newState);
         return this;
@@ -45,18 +43,8 @@ class State {
     }
 
     @Override
-    public boolean equals(Object obj){
-        if(obj == null){
-            return false;
-        }
-
-        if(obj.getClass() == this.getClass()){
-            State stateObj = (State)obj;
-            if( stateObj.name == this.name){
-                return true;
-            }
-        }
-
-        return false;
+    public String toString(){
+        return "State:" + name.name() + " - isFinal:" + isFinalState;
     }
+
 }

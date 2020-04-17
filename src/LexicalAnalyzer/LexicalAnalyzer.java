@@ -2,9 +2,6 @@ package LexicalAnalyzer;
 
 import FileInput.FileInput;
 
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
 
 public class LexicalAnalyzer {
 
@@ -13,18 +10,15 @@ public class LexicalAnalyzer {
     public LexicalAnalyzer(){
         StateManager.setUpStateTable();
 
-        StateList initialState = StateList.A;
-
-        State currentState = StateManager.state(initialState);
+        State currentState = StateManager.state(StateList.A);
+        System.out.println(currentState);
 
         FileInput myFile = new FileInput("demos/inputTest.txt");
 
-
-
         while(!currentState.isFinalState()){
             char nextInput = myFile.getNextChar();
-            System.out.println(nextInput);
             currentState = StateManager.state( currentState.next(nextInput) );
+            System.out.println("Input:" + nextInput + " -> " + currentState);
 
         }
 
