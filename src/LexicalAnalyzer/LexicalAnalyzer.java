@@ -22,29 +22,33 @@ public class LexicalAnalyzer {
     public String nextToken(){
 
         State currentState = StateManager.state(StateList.Initial);
-        //System.out.println(currentState);
+      //  System.out.println(currentState);
         String wordRead = "";
 
         while(!currentState.isFinalState()){
 
             char nextInput = fileToRead.getNextChar();
 
-            if(nextInput != ' ' && nextInput != '\n'){
+            //Turns new line in space- For the lexical new lines and spaces are the same
+            if(nextInput == '\n' || nextInput == '\r'){
+                nextInput = ' ';
+            }
+
+            if(nextInput != ' '){
                 wordRead = wordRead + nextInput;
             }
 
             currentState = StateManager.state( currentState.next(nextInput) );
-          //  System.out.println("Input:" + nextInput + " -> " + currentState.toDebugString());
+           // System.out.println("Input:" + nextInput + " -> " + currentState.toDebugString());
         }
-
-
+        
         //check if its a reserved word
         String Reserved = ReservedWords.check(wordRead);
         if( Reserved != null){
-            return wordRead + ", " + Reserved;
+            return wordRead + ", " + Reserved + "  Reserved";
         }
 
-        return wordRead + ", " + currentState;
+        return wordRead + ", " + currentState + "  No reserved";
     }
 
 

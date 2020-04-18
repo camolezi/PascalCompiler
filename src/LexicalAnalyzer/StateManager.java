@@ -26,7 +26,8 @@ class StateManager {
 
         //Create all states and is transitions
         addState(new State(StateList.Initial,false)
-                .addTransition(Transition.letter, StateList.intermediate_1));
+                .addTransition(Transition.letter, StateList.intermediate_1)
+                .addTransition(' ', StateList.Initial));
 
         addState(new State(StateList.intermediate_1,false)
                 .addTransition(Transition.letter, StateList.intermediate_1)
