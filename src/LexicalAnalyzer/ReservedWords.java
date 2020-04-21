@@ -22,14 +22,8 @@ class ReservedWords {
                 entry("while", "simb_while"),
                 entry("integer", "simb_type_integer"),
                 entry("end", "simb_end"),
-                entry("(", "simb_opar"),
-                entry(")", "simb_cpara"),
-                entry("do", "simb_do"),
-                entry("+", "simb_add"),
-                entry("-", "simb_minus"),
-                entry(";", "simb_pv"),
-                entry(":", "simb_dp"),
-                entry(".", "simb_ponto")
+                entry("do", "simb_do")
+
         );
 
     }

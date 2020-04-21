@@ -53,9 +53,11 @@ public class LexicalAnalyzer {
         }
 
         //check if its a reserved word
-        String Reserved = ReservedWords.check(wordRead);
-        if( Reserved != null){
-            return wordRead + ", " + Reserved;
+        if(currentState.name() == StateList.id){
+            String Reserved = ReservedWords.check(wordRead);
+            if( Reserved != null){
+                return wordRead + ", " + Reserved;
+            }
         }
 
         return wordRead + ", " + currentState;

@@ -7,6 +7,7 @@ import java.util.Map;
 enum StateList{
     Initial,
 
+    //Identifiers
     intermediate_id,
     id,
 
@@ -19,13 +20,7 @@ enum StateList{
     errorRealNumber, //Error in defining a real number
 
 
-    //Symbol state
-    intermediate_symbol,
-    validSymbol,
-    errorInvalidSymbol, //when symbols are not defined int the language
-
     //Relational operators
-
     intermediate_lesser,
     intermediate_greater,
 
@@ -36,10 +31,25 @@ enum StateList{
     simb_greater,         // >
     simb_equal,           // =
 
+    //arithmetic operators
+    simb_plus,          // +
+    simb_minus,         // -
+    simb_times,         // *
+    simb_division,      // /
+    simb_attribution,   // :=
+
+    //General Symbols
+
+    intermediate_colon,
+
+    simb_period,     // .
+    simb_colon,      // :
+    simb_comma,      // ,
+    simb_semicolon,  // ;
+    simb_open_par,   // (
+    simb_close_par,  // )
 
     //Error states
-
-
     Error
 }
 
@@ -55,8 +65,6 @@ class StateManager {
     public static void setUpStateTable(){
 
         stateList = new EnumMap<StateList, State>(StateList.class);
-
-
         /*
               Transitions:
 
@@ -68,16 +76,30 @@ class StateManager {
         //Create all states and is transitions
 
         // ---------------------Initial state----------------------------------
+
         addState(new State(StateList.Initial,false)
                 .addTransition(Transition.letter, StateList.intermediate_id)
                 .addTransition(Transition.number, StateList.intermediate_int)
                 .addTransition(' ', StateList.Initial)
 
-                //Symbol statse
+                // Relational operators states
                 .addTransition('<',StateList.intermediate_lesser)
                 .addTransition('>',StateList.intermediate_greater)
                 .addTransition('=',StateList.simb_equal)
 
+                //arithmetic
+                .addTransition('+',StateList.simb_plus)
+                .addTransition('-',StateList.simb_minus)
+                .addTransition('*',StateList.simb_times)
+                .addTransition('/',StateList.simb_division)
+
+                //General symbols
+                .addTransition(':',StateList.intermediate_colon)
+                .addTransition(';',StateList.simb_semicolon)
+                .addTransition('.',StateList.simb_period)
+                .addTransition(',',StateList.simb_comma)
+                .addTransition('(',StateList.simb_open_par)
+                .addTransition(')',StateList.simb_close_par)
         );
 
 
@@ -120,7 +142,8 @@ class StateManager {
         //Greater: >, >=
         addState(new State(StateList.intermediate_greater,false)
                 .addTransition('=',StateList.simb_greater_equal)
-                .addTransition(Transition.other, StateList.simb_greater));
+                .addTransition(Transition.other, StateList.simb_greater)
+        );
 
         addState(new State(StateList.simb_greater,true,true));
         addState(new State(StateList.simb_greater_equal,true,false));
@@ -129,11 +152,37 @@ class StateManager {
         addState(new State(StateList.intermediate_lesser,false)
                 .addTransition('=',StateList.simb_lesser_equal)
                 .addTransition('>',StateList.simb_not_equal)
-                .addTransition(Transition.other, StateList.simb_lesser));
+                .addTransition(Transition.other, StateList.simb_lesser)
+        );
 
         addState(new State(StateList.simb_lesser,true,true));
         addState(new State(StateList.simb_not_equal,true,false));
         addState(new State(StateList.simb_lesser_equal,true,false));
+
+
+        // ------------------Arithmetics-----------------------------------------
+
+        addState(new State(StateList.simb_plus,true));
+        addState(new State(StateList.simb_minus,true));
+        addState(new State(StateList.simb_times,true));
+        addState(new State(StateList.simb_division,true));
+        addState(new State(StateList.simb_attribution,true));
+
+
+        //-------------------------General Symbols -------------------------------------------
+        addState(new State(StateList.simb_colon,true,true));
+        addState(new State(StateList.simb_comma,true));
+        addState(new State(StateList.simb_open_par,true));
+        addState(new State(StateList.simb_close_par,true));
+        addState(new State(StateList.simb_semicolon,true));
+        addState(new State(StateList.simb_period,true));
+
+
+        addState(new State(StateList.intermediate_colon,false)
+                .addTransition('=',StateList.simb_attribution)
+                .addTransition(Transition.other, StateList.simb_colon)
+        );
+
 
         // -------------------------------Errors-----------------------------
 
