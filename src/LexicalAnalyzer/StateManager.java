@@ -16,8 +16,29 @@ enum StateList{
     integerNumber,
     realNumber,
 
-    //Error states
     errorRealNumber, //Error in defining a real number
+
+
+    //Symbol state
+    intermediate_symbol,
+    validSymbol,
+    errorInvalidSymbol, //when symbols are not defined int the language
+
+    //Relational operators
+
+    intermediate_lesser,
+    intermediate_greater,
+
+    simb_lesser_equal,    // <=
+    simb_greater_equal,   // >=
+    simb_not_equal,       // <>
+    simb_lesser,          // <
+    simb_greater,         // >
+    simb_equal,           // =
+
+
+    //Error states
+
 
     Error
 }
@@ -45,38 +66,77 @@ class StateManager {
          */
 
         //Create all states and is transitions
+
+        // ---------------------Initial state----------------------------------
         addState(new State(StateList.Initial,false)
                 .addTransition(Transition.letter, StateList.intermediate_id)
                 .addTransition(Transition.number, StateList.intermediate_int)
-                .addTransition(' ', StateList.Initial));
+                .addTransition(' ', StateList.Initial)
+
+                //Symbol statse
+                .addTransition('<',StateList.intermediate_lesser)
+                .addTransition('>',StateList.intermediate_greater)
+                .addTransition('=',StateList.simb_equal)
+
+        );
+
 
         // ---------------------------------Identifier------------------------------------------
         addState(new State(StateList.intermediate_id,false)
                 .addTransition(Transition.letter, StateList.intermediate_id)
                 .addTransition(Transition.number, StateList.intermediate_id)
-                .addTransition(Transition.other, StateList.id));
+                .addTransition(Transition.other, StateList.id)
+        );
 
         addState(new State(StateList.id, true,true));
 
         // ---------------------------------Numbers------------------------------------------
 
+            //Int
         addState(new State(StateList.intermediate_int,false)
                 .addTransition(Transition.number,StateList.intermediate_int)
                 .addTransition('.',StateList.intermediate_real)
-                .addTransition(Transition.other,StateList.integerNumber));
+                .addTransition(Transition.other,StateList.integerNumber)
+        );
 
         addState(new State(StateList.integerNumber, true, true));
 
-
+            //Real
         addState(new State(StateList.intermediate_real,false)
                 .addTransition(Transition.number,StateList.intermediate_real)
                 .addTransition(Transition.other,StateList.realNumber)
-                .addTransition('.',StateList.errorRealNumber));
+                .addTransition('.',StateList.errorRealNumber)
+        );
 
         addState(new State(StateList.realNumber, true, true));
 
 
-        // -------------------------------Error-----------------------------
+        //---------------------- Relational operators -----------------------------------------
+        // = , <>, >, < , >= , <=
+
+        //equal, =
+        addState(new State(StateList.simb_equal,true,false));
+
+        //Greater: >, >=
+        addState(new State(StateList.intermediate_greater,false)
+                .addTransition('=',StateList.simb_greater_equal)
+                .addTransition(Transition.other, StateList.simb_greater));
+
+        addState(new State(StateList.simb_greater,true,true));
+        addState(new State(StateList.simb_greater_equal,true,false));
+
+        //Lesser:  < , <=, <>
+        addState(new State(StateList.intermediate_lesser,false)
+                .addTransition('=',StateList.simb_lesser_equal)
+                .addTransition('>',StateList.simb_not_equal)
+                .addTransition(Transition.other, StateList.simb_lesser));
+
+        addState(new State(StateList.simb_lesser,true,true));
+        addState(new State(StateList.simb_not_equal,true,false));
+        addState(new State(StateList.simb_lesser_equal,true,false));
+
+        // -------------------------------Errors-----------------------------
+
         addState(new State(StateList.Error, true,false, true));
         addState(new State(StateList.errorRealNumber, true, false, true));
 
