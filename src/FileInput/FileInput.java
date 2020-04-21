@@ -6,8 +6,10 @@ public class FileInput {
     private int bufferSize;
     private BufferedReader bufferedReader;
     private boolean finishedFile = false;
-    private char nextChar = ' ';
 
+    private char nextChar = ' ';
+    private char previousChar = ' ';
+    private char currentReturn = ' ';
 
     //Constructors
     public FileInput(String name){
@@ -28,11 +30,43 @@ public class FileInput {
 
     //Public methods
     public boolean isFileFinished(){ return finishedFile; }
-    public int getBuffezier(){ return bufferSize; }
+    public int getBufferSize(){ return bufferSize; }
 
     public char getNextChar() {
-        char currentReturn = nextChar;
+        previousChar = currentReturn;
+        currentReturn = nextChar;
+
+
+        try {
+            bufferedReader.mark(5);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
         getNextFromFile();
+        return currentReturn;
+    }
+
+    public void retrocede(){
+        try {
+            bufferedReader.reset();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        nextChar = currentReturn;
+        currentReturn = previousChar;
+
+        finishedFile = false;
+    }
+
+
+    public char getPreviousChar(){
+        return previousChar;
+    }
+
+    public char getCurrentChar(){
         return currentReturn;
     }
 

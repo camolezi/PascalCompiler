@@ -5,9 +5,8 @@ import FileInput.FileInput;
 
 public class LexicalAnalyzer {
 
-    //Special caracthers
-    private static final String NEW_LINE = System.getProperty("line.separator");
-    private static final String SPACE = " ";
+    //Constants
+    private static State initialState;
 
 
     private FileInput fileToRead;
@@ -17,38 +16,49 @@ public class LexicalAnalyzer {
         //Start subsystems
         StateManager.setUpStateTable();
         ReservedWords.laodWords();
+
+        initialState = StateManager.state(StateList.Initial);
     }
 
     public String nextToken(){
 
-        State currentState = StateManager.state(StateList.Initial);
-      //  System.out.println(currentState);
+        State currentState = initialState;
         String wordRead = "";
 
-        while(!currentState.isFinalState()){
+        char nextInput = fileToRead.getCurrentChar();
 
-            char nextInput = fileToRead.getNextChar();
+        while(!currentState.isFinalState()){
 
             //Turns new line in space- For the lexical new lines and spaces are the same
             if(nextInput == '\n' || nextInput == '\r'){
                 nextInput = ' ';
             }
 
-            if(nextInput != ' '){
+            currentState = StateManager.state( currentState.next(nextInput));
+
+            //Consuming any spaces and new lines in the initial state
+            if(currentState != initialState){
                 wordRead = wordRead + nextInput;
             }
 
-            currentState = StateManager.state( currentState.next(nextInput) );
-           // System.out.println("Input:" + nextInput + " -> " + currentState.toDebugString());
+            nextInput = fileToRead.getNextChar();
+            // System.out.println("Input:" + nextInput + " -> " + currentState.toDebugString());
         }
-        
+
+        //If reached a error state, try to look back one state
+        if(currentState.needToRetrocede()){
+            fileToRead.retrocede();
+            if(wordRead.length() >= 2)
+                wordRead = wordRead.substring(0, wordRead.length() - 1);
+        }
+
         //check if its a reserved word
         String Reserved = ReservedWords.check(wordRead);
         if( Reserved != null){
-            return wordRead + ", " + Reserved + "  Reserved";
+            return wordRead + ", " + Reserved;
         }
 
-        return wordRead + ", " + currentState + "  No reserved";
+        return wordRead + ", " + currentState;
     }
 
 

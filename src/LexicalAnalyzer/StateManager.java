@@ -8,6 +8,7 @@ enum StateList{
     Initial,
     id,
     intermediate_1,
+    simb_pv,
     Error
 }
 
@@ -32,11 +33,12 @@ class StateManager {
         addState(new State(StateList.intermediate_1,false)
                 .addTransition(Transition.letter, StateList.intermediate_1)
                 .addTransition(Transition.number, StateList.intermediate_1)
-                .addTransition(' ', StateList.id));
+                .addTransition(Transition.other, StateList.id));
 
-        addState(new State(StateList.id, true));
+        addState(new State(StateList.id, true,true));
 
-        addState(new State(StateList.Error, true));
+        addState(new State(StateList.Error, true,false, true));
+
 
 
     }

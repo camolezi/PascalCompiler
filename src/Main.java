@@ -13,6 +13,7 @@ public class Main {
 
         LexicalAnalyzer tokenizer = new LexicalAnalyzer(myFile);
 
+
         while(!myFile.isFileFinished())
             System.out.println(tokenizer.nextToken());
 
