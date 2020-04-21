@@ -30,7 +30,7 @@ class State {
     //Represent the transitions from this state for a character
     private Map<Character,StateList> nextStates;
 
-    //Especial type of transitions for groups of characters
+    //Especial type transitions for groups of characters
     private Map<Transition,StateList> especialNextStates;
 
     public State(StateList name){

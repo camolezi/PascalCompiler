@@ -8,8 +8,8 @@ public class LexicalAnalyzer {
     //Constants
     private static State initialState;
 
-
     private FileInput fileToRead;
+
     public LexicalAnalyzer(FileInput fileToRead){
         this.fileToRead = fileToRead;
 
@@ -45,7 +45,7 @@ public class LexicalAnalyzer {
             // System.out.println("Input:" + nextInput + " -> " + currentState.toDebugString());
         }
 
-        //If reached a error state, try to look back one state
+        //check if the state needs to retrocede the file
         if(currentState.needToRetrocede()){
             fileToRead.retrocede();
             if(wordRead.length() >= 2)

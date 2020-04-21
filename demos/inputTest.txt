@@ -3,6 +3,6 @@ var x: integer;
 begin
 
     while( x ) do
-        x + 1;
+        x + 1.5 + 2 -3232 + 312312.123123;
 
 end.

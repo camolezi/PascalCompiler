@@ -14,6 +14,7 @@ class ReservedWords {
 
     static public void laodWords(){
 
+        //Table with all the language reserved words
         wordsMap = Map.ofEntries(
                 entry("program", "simb_program"),
                 entry("var", "simb_var"),
