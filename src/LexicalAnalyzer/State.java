@@ -62,7 +62,7 @@ class State {
 
         if(newState == null){
             //Check Especial Transitions and Error
-            StateList newSpecialState = StateList.Error;
+            StateList newSpecialState = StateList.lexicalError;
 
             if( especialNextStates.get(Transition.other) != null)
                 newSpecialState = especialNextStates.get(Transition.other);

@@ -50,7 +50,10 @@ enum StateList{
     simb_close_par,  // )
 
     //Error states
-    Error
+    invalidCharError,
+
+    //Generic lexical error,
+    lexicalError
 }
 
 class StateManager {
@@ -100,6 +103,8 @@ class StateManager {
                 .addTransition(',',StateList.simb_comma)
                 .addTransition('(',StateList.simb_open_par)
                 .addTransition(')',StateList.simb_close_par)
+
+                .addTransition(Transition.other, StateList.invalidCharError)
         );
 
 
@@ -186,7 +191,7 @@ class StateManager {
 
         // -------------------------------Errors-----------------------------
 
-        addState(new State(StateList.Error, true,false, true));
+        addState(new State(StateList.invalidCharError, true,false, true));
         addState(new State(StateList.errorRealNumber, true, false, true));
 
     }
