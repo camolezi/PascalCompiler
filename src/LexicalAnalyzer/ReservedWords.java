@@ -12,7 +12,7 @@ class ReservedWords {
         return wordsMap.get(compareWord);
     }
 
-    static public void laodWords(){
+    static public void loadWords(){
 
         //Table with all the language reserved words
         wordsMap = Map.ofEntries(

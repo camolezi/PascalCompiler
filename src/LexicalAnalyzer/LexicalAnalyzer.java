@@ -4,7 +4,6 @@ import FileInput.FileInput;
 
 
 public class LexicalAnalyzer {
-
     //Constants
     private static State initialState;
 
@@ -15,7 +14,7 @@ public class LexicalAnalyzer {
 
         //Start subsystems
         StateManager.setUpStateTable();
-        ReservedWords.laodWords();
+        ReservedWords.loadWords();
 
         initialState = StateManager.state(StateList.Initial);
     }
@@ -28,6 +27,10 @@ public class LexicalAnalyzer {
         char nextInput = fileToRead.getCurrentChar();
 
         while(!currentState.isFinalState()){
+
+            if(fileToRead.isFileFinished())
+                return null;
+
 
             //Turns new line in space- For the lexical new lines and spaces are the same
             if(nextInput == '\n' || nextInput == '\r'){

@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="PascalCompiler:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/PascalCompiler_jar</output-path>
+    <root id="archive" name="PascalCompiler.jar">
+      <element id="module-output" name="PascalCompiler" />
+    </root>
+  </artifact>
+</component>
