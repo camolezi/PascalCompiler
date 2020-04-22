@@ -7,6 +7,9 @@ import java.util.Map;
 enum StateList{
     Initial,
 
+    //Comment
+    comment, //{}
+
     //Identifiers
     intermediate_id,
     id,
@@ -84,6 +87,9 @@ class StateManager {
                 .addTransition(Transition.letter, StateList.intermediate_id)
                 .addTransition(Transition.number, StateList.intermediate_int)
                 .addTransition(' ', StateList.Initial)
+
+                //Comments
+                .addTransition('{' ,StateList.comment)
 
                 // Relational operators states
                 .addTransition('<',StateList.intermediate_lesser)
@@ -186,6 +192,13 @@ class StateManager {
         addState(new State(StateList.intermediate_colon,false)
                 .addTransition('=',StateList.simb_attribution)
                 .addTransition(Transition.other, StateList.simb_colon)
+        );
+
+        //--------------------Comment--------------------------------
+
+        addState(new State(StateList.comment,false)
+                .addTransition('}',StateList.Initial)
+                .addTransition(Transition.other, StateList.comment)
         );
 
 
