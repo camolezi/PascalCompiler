@@ -17,6 +17,7 @@ enum StateList{
     //numbers
     intermediate_int,
     intermediate_real,
+    intermediate_real2,
     integerNumber,
     realNumber,
 
@@ -136,7 +137,13 @@ class StateManager {
 
             //Real
         addState(new State(StateList.intermediate_real,false)
-                .addTransition(Transition.number,StateList.intermediate_real)
+                .addTransition(Transition.number,StateList.intermediate_real2)
+                .addTransition(Transition.other,StateList.errorRealNumber)
+                .addTransition('.',StateList.errorRealNumber)
+        );
+
+        addState(new State(StateList.intermediate_real2, false)
+                .addTransition(Transition.number,StateList.intermediate_real2)
                 .addTransition(Transition.other,StateList.realNumber)
                 .addTransition('.',StateList.errorRealNumber)
         );
