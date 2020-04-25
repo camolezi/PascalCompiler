@@ -4,9 +4,6 @@ import FileInput.*;
 import FileOutput.FileOutput;
 import LexicalAnalyzer.LexicalAnalyzer;
 
-import java.io.FileWriter;
-import java.io.IOException;
-
 
 public class Main {
     public static void main( String [] args ) {
@@ -19,7 +16,7 @@ public class Main {
         }
 
         if(args.length >= 2){
-            outputName = args[1];
+            outputName = args[1] + ".txt";
         }
 
         System.out.println("Compilation started");
