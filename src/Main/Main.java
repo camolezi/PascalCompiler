@@ -3,6 +3,7 @@ package Main;
 import FileInput.*;
 import FileOutput.FileOutput;
 import LexicalAnalyzer.LexicalAnalyzer;
+import SyntacticAnalyzer.SyntacticAnalyzer;
 
 
 public class Main {
@@ -25,11 +26,7 @@ public class Main {
         FileOutput outpuFile = new FileOutput(outputName);
 
 
-        LexicalAnalyzer tokenizer = new LexicalAnalyzer(myFile);
-
-        while(!myFile.isFileFinished()) {
-            outpuFile.writeln(tokenizer.nextToken());
-        }
+        SyntacticAnalyzer tokenizer = new SyntacticAnalyzer(myFile);
 
         System.out.println("Compilation finished");
 
