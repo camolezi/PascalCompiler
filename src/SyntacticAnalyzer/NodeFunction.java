@@ -1,5 +1,5 @@
 package SyntacticAnalyzer;
 
 public interface NodeFunction {
-    void executeNextNode(Node token);
+    void executeNextNode(Node thisNode, Node parent);
 }
