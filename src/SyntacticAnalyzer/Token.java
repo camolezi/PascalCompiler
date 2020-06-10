@@ -17,7 +17,7 @@ public class Token {
             return nextToken;
         }
         int startIndex = nextToken.indexOf(",") + 2; //+2 to get rid of the space;
-        return nextToken.substring(startIndex);
+        return nextToken.substring(startIndex).replace(" ","");
     }
 
 }

@@ -9,15 +9,19 @@ public class SyntacticAnalyzer {
 
         Token.StartTokenizer(new LexicalAnalyzer(fileToRead));
         NodeManager.setUpNodes();
-
+        NodeManager.startFirstNode();
+        /*
         while(!fileToRead.isFileFinished()) {
             String token = Token.getNext();
             System.out.println("variable:" + token);
             if(token.equals("simb_var")){
                 NodeManager.getNode(NodeList.var).executeNextNode(NodeManager.getNode(NodeList.var));
-            }
+
         }
+            */
 
 
     }
+
+
 }

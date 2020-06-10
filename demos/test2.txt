@@ -1,2 +1,12 @@
+program id;
 var a: integer;
-var b
+var s,s: real;
+const y = 1;
+
+procedure foo(x,x:real;y:integer);
+    begin
+
+read(x);
+
+
+
