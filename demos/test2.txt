@@ -1,12 +1,28 @@
 program id;
 var a: integer;
 var s,s: real;
-const y = 1;
 
-procedure foo(x,x:real;y:integer);
+begin
+
+write(x);
+
+if x > y then
+begin
+    while(x < 10) do
     begin
+        while(x<10) do
+        begin
+            write(x);
+        end
+    end
+end
+else
+begin
+    write(y);
+end
 
-read(x);
+x := +(x*k+(32+10-(k+1)));
 
 
+end;
 

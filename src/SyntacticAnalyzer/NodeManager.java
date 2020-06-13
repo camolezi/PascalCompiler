@@ -7,19 +7,35 @@ import java.util.Map;
 enum NodeList
 {
     Start,
+    Empty,//this represent a empty array(is used for optional tokens)
     Decl,
     Decl_const,
     Decl_var,
     Decl_procedure,
     Parameters_list,
     Commands,
+    CMD,
+    Condition,
+    Expression,
+    OtherExpression,
+    Relation,
+    Terms,
+    OtherTerms,
+    Op_Un,
+    Op_Mul,
+    Factor,
     Number,
+    MoreFactor,
     VarType,
     Var,
     Semicolon,
     Read_Write,
     While,
-    If
+    If,
+    ID,
+    Args,
+    argsIdentifier,
+    moreArgsIdentifier
 }
 
 public class NodeManager {
@@ -79,6 +95,15 @@ public class NodeManager {
             }
         );
 
+        //--------------------------------Empty-----------------------------------------
+
+        addNode(NodeList.Empty,
+            (Node thisNode , Node parent)->{
+                retrocedeToken();
+            }
+        );
+
+
         //--------------Declarations---------------------------------------------
 
         addNode(NodeList.Decl,
@@ -96,6 +121,7 @@ public class NodeManager {
                         break;
                     case("simb_begin"):
                         nextNode(getNode(NodeList.Commands),thisNode);
+                        nextNode(getNode(NodeList.Semicolon),thisNode);
                         break;
                     default:
                         addErrorMessage("Expected a declaration or a begin statement");
@@ -127,7 +153,7 @@ public class NodeManager {
                 if(token.equals("integerNumber") || token.equals("realNumber")){
                     return;
                 }else{
-                    addErrorMessage("missing type");
+                    addErrorMessage("Expected literal number");
                 }
             }
         );
@@ -168,12 +194,12 @@ public class NodeManager {
                     if(nextToken().equals("simb_open_par")){
                         nextNode(getNode(NodeList.Parameters_list),thisNode);
                         nextNode(getNode(NodeList.Semicolon),thisNode);
-
                         String token = nextToken();
                         if(token.equals("simb_var")){
                             nextNode(getNode(NodeList.Decl_var),thisNode);
                         }else if(token.equals("simb_begin")){
                             nextNode(getNode(NodeList.Commands),thisNode);
+                            nextNode(getNode(NodeList.Decl),thisNode);
                         }else{
                             addErrorMessage("Expected begin");
                         }
@@ -201,8 +227,6 @@ public class NodeManager {
             }
         );
 
-
-
         addNode (NodeList.VarType,
             (Node thisNode , Node parent)->{
                 String token = nextToken();
@@ -224,29 +248,52 @@ public class NodeManager {
             }
         );
 
-        addNode(NodeList.Commands,
-            (Node thisNode, Node parent)->{
+        addNode(NodeList.CMD,
+            (Node thisNode, Node parent)-> {
                 String token = nextToken();
-                if(token.isEmpty())
+                if (token.isEmpty()) {
+                    //addErrorMessage("Expected command");
                     return;
-
-                addErrorMessage(token);
-                switch (token){
-                    case("simb_read"):
-                    case("simb_write"):
-                        nextNode(getNode(NodeList.Read_Write),thisNode);
+                }
+                switch (token) {
+                    case ("simb_read"):
+                    case ("simb_write"):
+                        nextNode(getNode(NodeList.Read_Write), thisNode);
                         break;
-                    case("simb_while"):
-                        nextNode(getNode(NodeList.While),thisNode);
+                    case ("simb_while"):
+                        nextNode(getNode(NodeList.While), thisNode);
                         break;
-                    case("simb_if"):
-                        nextNode(getNode(NodeList.Commands),thisNode);
+                    case ("simb_if"):
+                        nextNode(getNode(NodeList.If),thisNode);
                         break;
-                    case("id"):
-                        nextNode(getNode(NodeList.VarType),thisNode);
+                    case ("id"):
+                        nextNode(getNode(NodeList.ID),thisNode);
+                        break;
+                    case ("simb_begin"):
+                        nextNode(getNode(NodeList.Commands), thisNode);
                         break;
                     default:
-                        addErrorMessage("Command not recognized");
+                        addErrorMessage("Expected a command, got:" + token);
+                }
+
+            }
+        );
+
+        addNode(NodeList.Commands,
+            (Node thisNode, Node parent)->{
+                while(true){
+                    String token = nextToken();
+                    if(token.equals("simb_end")){
+                        return;
+                    }else if(token.isBlank() || token.isEmpty()) {
+                        addErrorMessage("Missing end stm");
+                        return;
+                    }else{
+                        nextNode(getNode(NodeList.Empty),thisNode);
+                        nextNode(getNode(NodeList.CMD),thisNode);
+
+                    }
+
                 }
             }
         );
@@ -256,7 +303,7 @@ public class NodeManager {
                 if(nextToken().equals("simb_open_par")){
                     nextNode(getNode(NodeList.Var),thisNode);
                     nextNode(getNode(NodeList.Semicolon),thisNode);
-                    nextNode(getNode(NodeList.Commands),thisNode);
+                    return;
                 }else {
                     addErrorMessage("Expected parenthesis");
                 }
@@ -266,14 +313,172 @@ public class NodeManager {
         addNode(NodeList.While,
             (Node thisNode, Node parent)->{
                 if(nextToken().equals("simb_open_par")){
+                    nextNode(getNode(NodeList.Condition),thisNode);
+                    if(nextToken().equals("simb_close_par")){
+                        if(nextToken().equals("simb_do")){
+                            nextNode(getNode(NodeList.CMD),thisNode);
+                        }else{
+                            addErrorMessage("missing simb do");
+                        }
+                    }else{
+                        addErrorMessage("mising close parenthesis");
+                    }
                 }else {
                     addErrorMessage("Expected parenthesis");
                 }
             }
         );
 
+        addNode(NodeList.Condition,
+            (Node thisNode, Node parent)->{
+                nextNode(getNode(NodeList.Expression),thisNode);
+                nextNode(getNode(NodeList.Relation),thisNode);
+                nextNode(getNode(NodeList.Expression),thisNode);
+            }
+        );
 
+        addNode(NodeList.Expression,
+            (Node thisNode, Node parent)->{
+                nextNode(getNode(NodeList.Terms),thisNode);
+                nextNode(getNode(NodeList.OtherTerms),thisNode);
+            }
+        );
 
+        addNode(NodeList.Relation,
+            (Node thisNode, Node parent)->{
+                String token = nextToken();
+                if(token.equals("simb_equal") || token.equals("simb_not_equal")||
+                   token.equals("simb_greater_equal") || token.equals("simb_lesser_equal") ||
+                   token.equals("simb_greater") || token.equals("simb_lesser")){
+                    return;
+                }else{
+                    addErrorMessage("Expected a relation symbol");
+                }
+            }
+        );
+
+        addNode(NodeList.Terms,
+            (Node thisNode, Node parent)->{
+                nextNode(getNode(NodeList.Op_Un),thisNode);
+                nextNode(getNode(NodeList.Factor),thisNode);
+                nextNode(getNode(NodeList.MoreFactor),thisNode);
+            }
+        );
+
+        addNode(NodeList.Op_Un,
+            (Node thisNode, Node parent)->{
+                String token = nextToken();
+                if(token.equals("simb_plus") || token.equals("simb_minus")){
+                    return;
+                }else{
+                    nextNode(getNode(NodeList.Empty),thisNode);
+                }
+            }
+        );
+
+        addNode(NodeList.OtherTerms,
+            (Node thisNode, Node parent)->{
+                String token = nextToken();
+                if(token.equals("simb_plus") || token.equals("simb_minus")){
+                    nextNode(getNode(NodeList.Terms),thisNode);
+                    nextNode(getNode(NodeList.OtherTerms),thisNode);
+                }else{
+                    nextNode(getNode(NodeList.Empty),thisNode);
+                }
+
+            }
+        );
+
+        addNode(NodeList.MoreFactor,
+            (Node thisNode, Node parent)->{
+                String token = nextToken();
+                if(token.equals("simb_times") || token.equals("simb_division")){
+                    nextNode(getNode(NodeList.Factor),thisNode);
+                    nextNode(getNode(NodeList.MoreFactor),thisNode);
+                }else{
+                    nextNode(getNode(NodeList.Empty),thisNode);
+                }
+            }
+        );
+
+        addNode(NodeList.Factor,
+            (Node thisNode, Node parent)->{
+                String token = nextToken();
+                if(token.equals("id")){
+                    return;
+                }else if(token.equals("simb_open_par")){
+                    nextNode(getNode(NodeList.Expression), thisNode);
+                    if(nextToken().equals("simb_close_par")){
+                        return;
+                    }else{
+                        addErrorMessage("Missing close parentheses");
+                    }
+                }else if(token.equals("integerNumber") || token.equals("realNumber")){
+                    return;
+                }else{
+                    addErrorMessage("Expected literal number or variable");
+                }
+            }
+        );
+
+        addNode(NodeList.If,
+            (Node thisNode, Node parent)->{
+                nextNode(getNode(NodeList.Condition),thisNode);
+                if(nextToken().equals("simb_then")){
+                    nextNode(getNode(NodeList.CMD),thisNode);
+                    String token = nextToken();
+                    if(token.equals("simb_else")){
+                        nextNode(getNode(NodeList.CMD),thisNode);
+                    }else{
+                        nextNode(getNode(NodeList.Empty),thisNode);
+                    }
+                }else{
+                    addErrorMessage("Expected symbol then");
+                }
+            }
+        );
+
+        addNode(NodeList.ID,
+            (Node thisNode, Node parent)->{
+                if(nextToken().equals("simb_attribution")){
+                    if(nextToken().equals("simb_open_par")){
+                        nextNode(getNode(NodeList.Args),thisNode);
+                        if(nextToken().equals("simb_close_par")){
+                            nextNode(getNode(NodeList.Semicolon),thisNode);
+                            return;
+                        }else{
+                            addErrorMessage("Missing close parentheses");
+                        }
+                    }else{
+                        nextNode(getNode(NodeList.Empty),thisNode);
+                        nextNode(getNode(NodeList.Expression),thisNode);
+                        nextNode(getNode(NodeList.Semicolon),thisNode);
+                    }
+                }else{
+                    addErrorMessage("Expected attribution symbol");
+                }
+            }
+        );
+
+        addNode(NodeList.Args,
+            (Node thisNode , Node parent)->{
+                if(nextToken().equals("id")){
+                    nextNode(getNode(NodeList.moreArgsIdentifier),thisNode);
+                }else{
+                    addErrorMessage("Expected identifier");
+                }
+            }
+        );
+
+        addNode(NodeList.moreArgsIdentifier,
+            (Node thisNode , Node parent)->{
+                if(nextToken().equals("simb_semicolon")){
+                    nextNode(getNode(NodeList.Args),thisNode);
+                }else{
+                    nextNode(getNode(NodeList.Empty),thisNode);
+                }
+            }
+        );
     }
 
 
@@ -298,6 +503,10 @@ public class NodeManager {
     private static void addErrorMessage(String errorMsg){
         //For now just print
         System.out.println(errorMsg);
+    }
+
+    private static void retrocedeToken(){
+        Token.retrocedeToken();
     }
 
 
