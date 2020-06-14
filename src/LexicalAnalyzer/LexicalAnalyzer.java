@@ -8,6 +8,7 @@ public class LexicalAnalyzer {
     private static State initialState;
 
     private FileInput fileToRead;
+    private int lineNumber = 0;
 
     public LexicalAnalyzer(FileInput fileToRead){
         this.fileToRead = fileToRead;
@@ -18,6 +19,8 @@ public class LexicalAnalyzer {
 
         initialState = StateManager.state(StateList.Initial);
     }
+
+    public int getLineNumber(){return lineNumber;}
 
     public String nextToken(){
 
@@ -33,9 +36,9 @@ public class LexicalAnalyzer {
 
             //Turns new line in space- For the lexical new lines and spaces are the same
             if(nextInput == '\n' || nextInput == '\r' || nextInput == '\t'){
+                lineNumber++;
                 nextInput = ' ';
             }
-
             currentState = StateManager.state( currentState.next(nextInput));
 
             //Consuming any spaces and new lines in the initial state
@@ -44,8 +47,6 @@ public class LexicalAnalyzer {
             }
 
             nextInput = fileToRead.getNextChar();
-          //  System.out.println(nextInput);
-            // System.out.println("Input:" + nextInput + " -> " + currentState.toDebugString());
         }
 
         //check if the state needs to retrocede the file

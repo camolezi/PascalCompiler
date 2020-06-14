@@ -4,10 +4,12 @@ var s,s: real;
 
 begin
 
-write(x);
 
+write(x);
 if x > y then
 begin
+    x := 10.0;
+    minahvar@has := 10.0;
     while(x < 10) do
     begin
         while(x<10) do

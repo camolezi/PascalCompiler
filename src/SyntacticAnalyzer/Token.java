@@ -14,6 +14,7 @@ public class Token {
 
     private Token(){}
 
+    public static int getCurrentLine(){return tokenizer.getLineNumber();}
 
     public static void StartTokenizer(LexicalAnalyzer _tokenizer){
         tokenizer = _tokenizer;
@@ -44,7 +45,29 @@ public class Token {
             return nextToken;
         }
         int startIndex = nextToken.indexOf(",") + 2; //+2 to get rid of the space;
-        return nextToken.substring(startIndex).replace(" ","");
+        String parsedToken = nextToken.substring(startIndex).replace(" ","");
+
+        String original = nextToken.substring(0,nextToken.indexOf(","));
+
+        VerifyLexicalError(parsedToken,original);
+        return parsedToken;
+    }
+
+    private static void VerifyLexicalError(String parsed, String original){
+        switch (parsed){
+            case("errorRealNumber"):
+                System.out.println("Ill formed real number: " + original);
+                break;
+            case("invalidCharError"):
+                System.out.println("Invalid character in identifier: "+ original);
+                break;
+            case("lexicalError"):
+                System.out.println("Ill formed word or invalid character: "+ original);
+                break;
+            default:
+                break;
+        }
+
     }
 
 }
