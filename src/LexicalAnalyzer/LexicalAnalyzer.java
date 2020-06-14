@@ -60,11 +60,11 @@ public class LexicalAnalyzer {
         if(currentState.name() == StateList.id){
             String Reserved = ReservedWords.check(wordRead);
             if( Reserved != null){
-                return wordRead + ", " + Reserved;
+                return Reserved+ "|" + wordRead  + "|" + getLineNumber();
             }
         }
 
-        return wordRead + ", " + currentState;
+        return  currentState + "|" + wordRead + "|" + getLineNumber();
     }
 
 

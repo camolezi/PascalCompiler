@@ -502,7 +502,7 @@ public class NodeManager {
 
     private static void addErrorMessage(String errorMsg){
         //For now just print
-        System.out.println(" :" + errorMsg);
+        System.out.println(": " + errorMsg);
     }
 
     private static void retrocedeToken(){

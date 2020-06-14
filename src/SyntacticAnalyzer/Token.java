@@ -44,25 +44,30 @@ public class Token {
         if(nextToken.isBlank() || nextToken.isEmpty()){
             return nextToken;
         }
-        int startIndex = nextToken.indexOf(",") + 2; //+2 to get rid of the space;
-        String parsedToken = nextToken.substring(startIndex).replace(" ","");
+        //Parse the string
+        int startIndex = nextToken.indexOf("|") ;
+        String parsedToken = nextToken.substring(0,startIndex);
 
-        String original = nextToken.substring(0,nextToken.indexOf(","));
+        String aux = nextToken.substring(startIndex+1).replace(" ","");
 
-        VerifyLexicalError(parsedToken,original);
+        startIndex = aux.indexOf("|");
+        String original = aux.substring(0,startIndex);
+        String lineNumber = aux.substring(startIndex+1);
+
+        VerifyLexicalError(parsedToken,original,lineNumber);
         return parsedToken;
     }
 
-    private static void VerifyLexicalError(String parsed, String original){
+    private static void VerifyLexicalError(String parsed, String original,String lineNumber){
         switch (parsed){
             case("errorRealNumber"):
-                System.out.println("Ill formed real number: " + original);
+                System.out.println( "On line:"+lineNumber + " - " + "Ill formed real number: " + original );
                 break;
             case("invalidCharError"):
-                System.out.println("Invalid character in identifier: "+ original);
+                System.out.println("On line:"+lineNumber + " - " + "Invalid character in identifier: "+ original);
                 break;
             case("lexicalError"):
-                System.out.println("Ill formed word or invalid character: "+ original);
+                System.out.println("On line:"+lineNumber + " - " + "Ill formed word or invalid character: "+ original);
                 break;
             default:
                 break;
