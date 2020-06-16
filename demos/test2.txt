@@ -1,19 +1,30 @@
-program id;
-var a: integer;
-var s,s: real;
+program x;
+
+const x = 10;
+
+var s: real;
+var s,s: integer;
+
+procedure nomep(x: real);
+var s: real;
+begin
+end;
 
 begin
 
 write(x);
 if x > y then
 begin
-    xasdhja@ := 10.0;
+    xasdhja := (10.0 + 10 + 30);
 
-    while(x < 10) do
+    test(x;y;z);
+    while (x < 10) do
     begin
-        while(x<10) do
+        while (x > x) do
         begin
-            write(x);
+            read (x);
+            variable(x);
+            write (x);
         end
     end
 end

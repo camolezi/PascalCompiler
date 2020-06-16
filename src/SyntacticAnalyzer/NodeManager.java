@@ -1,5 +1,6 @@
 package SyntacticAnalyzer;
 
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -72,6 +73,11 @@ public class NodeManager {
             nextNode(nextNodeReference,parentNode) -> use this to pass the control to a next node and execute its function.
                 nextNodeReference is a reference to the next node that will be executed (use getNode() to get this reference)
                 ParentNode is who is calling the nextNode. Generally you will pass thisNode as argument. (Since is you who is calling)
+
+        -Error handling
+            addErrorMessage(String error)
+
+
         */
 
 
@@ -88,9 +94,12 @@ public class NodeManager {
                         nextNode(getNode(NodeList.Decl),thisNode);
                     }else{
                         addErrorMessage("Missing program identifier");
+                        continueAfterError();
                     }
                 }else{
                     addErrorMessage("Missing program declaration: Expected program keyword");
+                    synchronizeWithDecl();
+                    nextNode(getNode(NodeList.Decl),thisNode);
                 }
             }
         );
@@ -125,6 +134,7 @@ public class NodeManager {
                         break;
                     default:
                         addErrorMessage("Expected a declaration or a begin statement");
+                        break;
                 }
             }
         );
@@ -142,6 +152,8 @@ public class NodeManager {
                     }
                 }else{
                     addErrorMessage("const declaration missing ID");
+                    synchronizeWithDecl();
+                    nextNode(getNode(NodeList.Decl), thisNode);
                 }
             }
         );
@@ -154,6 +166,7 @@ public class NodeManager {
                     return;
                 }else{
                     addErrorMessage("Expected literal number");
+                    continueAfterError();
                 }
             }
         );
@@ -181,9 +194,11 @@ public class NodeManager {
                             return;
                         }else{
                             addErrorMessage("Expected close parentheses or colon");
+                            continueAfterError();
                         }
                     }else{
-                        addErrorMessage("Missing identifier");
+                        addErrorMessage("Expected identifier");
+                        synchronizeWith("simb_read","simb_write","simb_if","id","simb_begin","simb_end","simb_const","simb_var","simb_procedure","simb_begin");
                     }
                 }
         );
@@ -202,12 +217,18 @@ public class NodeManager {
                             nextNode(getNode(NodeList.Decl),thisNode);
                         }else{
                             addErrorMessage("Expected begin");
+                            synchronizeWithDecl();
+                            nextNode(getNode(NodeList.Decl),thisNode);
                         }
                     }else{
                         addErrorMessage("Missing open parentheses");
+                        synchronizeWithDecl();
+                        nextNode(getNode(NodeList.Decl),thisNode);
                     }
                 }else{
                     addErrorMessage("Missing procedure name");
+                    synchronizeWithDecl();
+                    nextNode(getNode(NodeList.Decl),thisNode);
                 }
             }
         );
@@ -223,6 +244,7 @@ public class NodeManager {
                     return;
                 }else{
                     addErrorMessage("Missing semicolon or close parentheses");
+                    continueAfterError();
                 }
             }
         );
@@ -234,6 +256,7 @@ public class NodeManager {
                     return;
                 }else{
                     addErrorMessage("Type not recognized");
+                    continueAfterError();
                 }
             }
         );
@@ -244,6 +267,7 @@ public class NodeManager {
                     return;
                 }else {
                     addMissingSemicolonError();
+                    continueAfterError();
                 }
             }
         );
@@ -274,6 +298,7 @@ public class NodeManager {
                         break;
                     default:
                         addErrorMessage("Expected a command, got:" + token);
+                        break;
                 }
 
             }
@@ -306,6 +331,7 @@ public class NodeManager {
                     return;
                 }else {
                     addErrorMessage("Expected parenthesis");
+                    synchronizeWithCommand();
                 }
             }
         );
@@ -318,13 +344,16 @@ public class NodeManager {
                         if(nextToken().equals("simb_do")){
                             nextNode(getNode(NodeList.CMD),thisNode);
                         }else{
-                            addErrorMessage("missing simb do");
+                            addErrorMessage("expected simb do");
+                            synchronizeWithCommand();
                         }
                     }else{
-                        addErrorMessage("mising close parenthesis");
+                        addErrorMessage("expected close parenthesis");
+                        synchronizeWithCommand();
                     }
                 }else {
                     addErrorMessage("Expected parenthesis");
+                    synchronizeWithCommand();
                 }
             }
         );
@@ -353,6 +382,7 @@ public class NodeManager {
                     return;
                 }else{
                     addErrorMessage("Expected a relation symbol");
+                    continueAfterError();
                 }
             }
         );
@@ -412,11 +442,13 @@ public class NodeManager {
                         return;
                     }else{
                         addErrorMessage("Missing close parentheses");
+                        continueAfterError();
                     }
                 }else if(token.equals("integerNumber") || token.equals("realNumber")){
                     return;
                 }else{
                     addErrorMessage("Expected literal number or variable");
+                    continueAfterError();
                 }
             }
         );
@@ -434,28 +466,29 @@ public class NodeManager {
                     }
                 }else{
                     addErrorMessage("Expected symbol then");
+                    synchronizeWithCommand();
                 }
             }
         );
 
         addNode(NodeList.ID,
             (Node thisNode, Node parent)->{
-                if(nextToken().equals("simb_attribution")){
-                    if(nextToken().equals("simb_open_par")){
-                        nextNode(getNode(NodeList.Args),thisNode);
-                        if(nextToken().equals("simb_close_par")){
-                            nextNode(getNode(NodeList.Semicolon),thisNode);
-                            return;
-                        }else{
-                            addErrorMessage("Missing close parentheses");
-                        }
-                    }else{
-                        nextNode(getNode(NodeList.Empty),thisNode);
-                        nextNode(getNode(NodeList.Expression),thisNode);
+                String token = nextToken();
+                if(token.equals("simb_open_par")){
+                    nextNode(getNode(NodeList.Args),thisNode);
+                    if(nextToken().equals("simb_close_par")){
                         nextNode(getNode(NodeList.Semicolon),thisNode);
+                        return;
+                    }else{
+                        addErrorMessage("Missing close parentheses");
+                        continueAfterError();
                     }
+                }else if(token.equals("simb_attribution")){
+                    nextNode(getNode(NodeList.Expression),thisNode);
+                    nextNode(getNode(NodeList.Semicolon),thisNode);
                 }else{
-                    addErrorMessage("Expected attribution symbol");
+                    addErrorMessage("Expected attribution or function call");
+                    synchronizeWithCommand();
                 }
             }
         );
@@ -466,6 +499,7 @@ public class NodeManager {
                     nextNode(getNode(NodeList.moreArgsIdentifier),thisNode);
                 }else{
                     addErrorMessage("Expected identifier");
+                    continueAfterError();
                 }
             }
         );
@@ -502,12 +536,48 @@ public class NodeManager {
 
     private static void addErrorMessage(String errorMsg){
         //For now just print
-        System.out.println(": " + errorMsg);
+        System.out.println(errorMsg+ "  " + Token.getCurrentTokenInfo());
     }
 
     private static void retrocedeToken(){
         Token.retrocedeToken();
     }
 
+    private static void synchronizeWith(String ... tokens){
+        synchronizeWith_array(tokens,true);
+    }
 
+    private static void synchronizeAfter(String ... tokens){
+        synchronizeWith_array(tokens,false);
+    }
+
+    private static void synchronizeWithCommand(){
+        synchronizeWith("simb_read","simb_write","simb_if","id","simb_begin","simb_end");
+    }
+
+    private static void synchronizeWithDecl(){
+        synchronizeWith("simb_const","simb_var","simb_procedure","simb_begin");
+    }
+
+    private static void continueAfterError(){
+        Token.retrocedeToken();
+    }
+
+    //Just for internal use- when making node use synchronizeWith or synchronizeAfter
+    private static void synchronizeWith_array(String [] tokens, boolean retrocede){
+        Arrays.sort(tokens);
+        String currentToken = nextToken();
+        while(Arrays.binarySearch(tokens,currentToken) < 0)
+        {
+            if(currentToken.isBlank() || currentToken.isEmpty()){
+                System.out.println("Entered in the return statemetn");
+                return;
+            }
+            currentToken = nextToken();
+        }
+        //found the synchronization character
+        //return one token, so the state machine can read it again
+        if(retrocede)
+            Token.retrocedeToken();
+    }
 }

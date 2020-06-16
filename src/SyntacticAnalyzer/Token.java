@@ -58,6 +58,23 @@ public class Token {
         return parsedToken;
     }
 
+    public static String getCurrentTokenInfo(){
+        String previousToken = it.previous();
+        String currentToken = it.next();
+
+        if(currentToken.isBlank() || currentToken.isEmpty()){
+            return currentToken;
+        }
+        //Parse the string
+        int startIndex = currentToken.indexOf("|") ;
+        String aux = currentToken.substring(startIndex+1).replace(" ","");
+        startIndex = aux.indexOf("|");
+        String original = aux.substring(0,startIndex);
+        String lineNumber = aux.substring(startIndex+1);
+
+        return "on line:" + lineNumber + " got: '" + original+ "'";
+    }
+
     private static void VerifyLexicalError(String parsed, String original,String lineNumber){
         switch (parsed){
             case("errorRealNumber"):

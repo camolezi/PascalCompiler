@@ -36,7 +36,9 @@ public class LexicalAnalyzer {
 
             //Turns new line in space- For the lexical new lines and spaces are the same
             if(nextInput == '\n' || nextInput == '\r' || nextInput == '\t'){
-                lineNumber++;
+                if(nextInput == '\n'){
+                    lineNumber++;
+                }
                 nextInput = ' ';
             }
             currentState = StateManager.state( currentState.next(nextInput));
