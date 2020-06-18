@@ -1,40 +1,24 @@
-program x;
+{program escrito errado}
+progra x;
 
-const x = 10;
+const x  10; {Falta simbulo de igual}
 
-var s: real;
-var s,s: integer;
+ s,s: integer;{faltou keyword var}
+var s: real   {falta ponto virgula}
 
-procedure nomep(x: real);
-var s: real;
-begin
-end;
+procedure nomep x: real);
 
 begin
-
-write(x);
-if x > y then
+write();
+if x  y then {if incloleto}
 begin
-    xasdhja := (10.0 + 10 + 30);
-
-    test(x;y;z);
-    while (x < 10) do
-    begin
-        while (x > x) do
-        begin
-            read (x);
-            variable(x);
-            write (x);
-        end
-    end
+    while(x < ) {while sem Do}
+    write(x);
 end
 else
 begin
-    write(y);
+    write(); {write vazio}
 end
-
 x := +(x*k+(32+10-(k+1)));
-
-
 end;
 

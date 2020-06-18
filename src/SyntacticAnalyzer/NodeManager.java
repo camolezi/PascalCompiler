@@ -149,6 +149,8 @@ public class NodeManager {
                         nextNode(getNode(NodeList.Decl), thisNode);
                     }else{
                         addErrorMessage("const declaration missing =");
+                        synchronizeWithDecl();
+                        nextNode(getNode(NodeList.Decl), thisNode);
                     }
                 }else{
                     addErrorMessage("const declaration missing ID");
